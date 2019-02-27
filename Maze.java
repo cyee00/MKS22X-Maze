@@ -6,7 +6,7 @@ public class Maze{
   private char[][] maze;
   private boolean animate;
 
-  public Maze(String filename) throws FileNotFoundException{
+  public Maze(String filename) throws FileNotFoundException, IllegalStateException{
     animate = false;
     int rows=0;
     int cols=0;
@@ -22,18 +22,29 @@ public class Maze{
     }
     maze = new char[rows][cols+1]; //set dimensions of the maze
 
-    //actually filling out the array with maze info
+    //actually filling out the array with maze info AND simultaneously check for E and S requirement.
     File text0 = new File(filename);
     Scanner file0 = new Scanner(text0);
+    int noEs=0;
+    int noSs=0;
     int r=0;
     while (file0.hasNextLine()){
       String line = file0.nextLine();
       for (int i=0;i<line.length();i++){
         //System.out.println(line.charAt(i));
         maze[r][i]=line.charAt(i);
+        if (line.charAt(i)=='E'){
+          noEs++;
+        }
+        if (line.charAt(i)=='S'){
+          noSs++;
+        }
       }
       maze[r][line.length()]='\n';
       r++; //move on to next row
+    }
+    if (!(noEs==1&&noSs==1)){
+      throw new IllegalStateException();
     }
   }
 
@@ -60,12 +71,26 @@ public class Maze{
       Since the constructor exits when the file is not found or is missing an E or S, we can assume it exists.
     */
     public int solve(){
-            //find the location of the S.
+      //find the location of the S.
+      int row=0;
+      int col=0;
+      for (int r=0;r<maze.length;r++){
+        for (int c=0;c<maze[r].length;c++){
+          if (maze[r][c]=='S'){
+            row=r;
+            col=c;
+            r=maze.length; //exiting out of the loops because we found the S
+            c=maze[r].length;
+          }
+        }
+      }
 
-            //erase the S
+      //erase the S
+      maze[row][col]='@';
+      //and start solving at the location of the s.
 
-            //and start solving at the location of the s.
             //return solve(???,???);
+        return 0;
     }
 
     /*
@@ -111,6 +136,8 @@ public class Maze{
       System.out.println(maze.toString());
     }catch(FileNotFoundException e){
       System.out.println("File not found, please enter a valid filename");
+    }catch(IllegalStateException e){
+      System.out.println("File is invalid. Please make sure there is exactly 1 E and 1 S");
     }
   }
 }
