@@ -116,7 +116,17 @@ public class Maze{
         }
 
         //COMPLETE SOLVE
-        return -1; //so it compiles
+
+        //returning # of @'s
+        int count = 0;
+        for (int r=0;r<maze.length;r++){
+          for (int c=0;c<maze[r].length;c++){
+            if (maze[r][c]=='@'){
+              count++;
+            }
+          }
+        }
+        return count; //so it compiles
     }
 
   public String toString(){
